@@ -13,12 +13,21 @@
     <b-card class="mt-4" v-if="data">
           <h2>{{ username }}'s collection</h2>
           <p>Number of games: {{ games.length }}</p>
-          <b-button @click="pickAGame()">Pick a game</b-button>
+          <b-button @click="pickAGame()">
+            <span v-if="pickedGame">Pick another game</span>
+            <span v-else>Pick a game</span>
+            </b-button>
     </b-card>
-    <b-card class="mt-4" v-if="pickedGame">
-      <div class="result">{{ pickedGame.name._text }}</div>
+    <b-card class="mt-4 mb-4" v-if="pickedGame">
+      <img class="image" :src="pickedGame.image._text">
+      <h2 class="result">{{ pickedGame.name._text }}</h2>
+      <ul>
+        <li>BGG average rating: {{ pickedGameRating }}</li>
+        <li>Game length: {{ pickedGame.stats._attributes.playingtime }}m</li>
+        <li>Number of players: {{ pickedGame.stats._attributes.minplayers}} - {{ pickedGame.stats._attributes.maxplayers }}
+        </li>
+      </ul>
     </b-card>    
-    
   </b-container>
 </template>
 
@@ -34,6 +43,7 @@ export default {
       games: null,
       gameNames: [],
       pickedGame: null,
+      pickedGameRating: null,
       result: null,
       username: null
     }
@@ -60,6 +70,7 @@ export default {
     pickAGame(){
       let gameNumber = Math.floor(Math.random() * this.gameNames.length);
       this.pickedGame = this.games[gameNumber];
+      this.pickedGameRating = Number(this.pickedGame.stats.rating.average._attributes.value).toFixed(1);
     }
   }
 }
@@ -74,5 +85,8 @@ export default {
 }
 .result {
   margin-top: 30px;
+}
+.image {
+  max-width: 350px;
 }
 </style>
