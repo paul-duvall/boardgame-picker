@@ -1,6 +1,12 @@
 <template>
   <div id="app">
     <div>
+      <h1>Lazy Gamer</h1>
+      <p>Want to play a game but can't be bother to decide which one? Enter your BGG username and you can randomly select
+         a game that you have in your collection.
+      </p>
+    </div>
+    <div>
       <input v-model="username" type="text">
       <button @click="getData()">Get collection</button>
       <div v-if="data">
