@@ -1,12 +1,18 @@
 <template>
   <div id="app">
-    
+    <div>
       <input v-model="username" type="text">
-      <button @click="getData()">Set username</button>
+      <button @click="getData()">Get collection</button>
+      <div v-if="data">
+          <h2>{{ username }}'s collection</h2>
+          Number of games: {{ games.length }}
+      </div>
+    </div>
+    <div v-if="games">
+      <button @click="pickAGame()">Pick a game</button>
+      <div v-if="result" class="result">{{ result }}</div>
+    </div>    
     
-    
-    <button @click="pickAGame()">Pick a game</button>
-    <div v-if="result" class="result">{{ result }}</div>
   </div>
 </template>
 
@@ -18,6 +24,7 @@ export default {
   name: 'App',
   data: function () {
     return {
+      data: null,
       games: null,
       gameNames: [],
       result: null,
@@ -27,12 +34,17 @@ export default {
   methods: {
     getData() {
       let url = `https://www.boardgamegeek.com/xmlapi/collection/${this.username}?own=1`;
-      axios.get(url)
-      .then((response) => {
-        var result1 = convert.xml2json(response.data, {compact: true, spaces: 4});
+      this.$toast.open({
+        message: 'This may take a moment!',
+        duration: 2000,
+        position: 'bottom',
+        type: 'info'
+      });
+      axios.get(url).then((response) => {
+        var jsonResult = convert.xml2json(response.data, {compact: true, spaces: 4});
       
-        let results = JSON.parse(result1);
-        this.games = results.items.item;
+        this.data = JSON.parse(jsonResult);
+        this.games = this.data.items.item;
         this.games.forEach(game => {
           this.gameNames.push(game.name._text);
         });

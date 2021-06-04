@@ -12,6 +12,7 @@
     "bgg-xml-api-client": "^0.1.5",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
+    "vue-toast-notification": "^0.6.2",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
