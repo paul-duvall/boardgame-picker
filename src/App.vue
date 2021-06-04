@@ -7,14 +7,17 @@
       </p>
     </div>
     <div>
-      <b-form-input v-model="username" placeholder="Enter your username"></b-form-input>
-      <b-button class="mt-4" @click="getData()">Get collection</b-button>
+      <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
+      <b-button class="mt-4" @click="getData()">
+        <span v-if="haveUsername">Get a different collection</span>
+        <span v-else>Get collection</span>
+      </b-button>
     </div>
     <b-card class="mt-4" v-if="data">
           <h2>{{ username }}'s collection</h2>
           <p>Number of games: {{ games.length }}</p>
           <b-button @click="pickAGame()">
-            <span v-if="pickedGame">Pick another game</span>
+            <span v-if="pickedGame">Pick different game</span>
             <span v-else>Pick a game</span>
             </b-button>
     </b-card>
@@ -41,7 +44,8 @@ export default {
     return {
       data: null,
       games: null,
-      gameNames: [],
+      haveUsername: false,
+      inputtedUsername: null,
       pickedGame: null,
       pickedGameRating: null,
       result: null,
@@ -50,7 +54,7 @@ export default {
   },
   methods: {
     getData() {
-      let url = `https://www.boardgamegeek.com/xmlapi/collection/${this.username}?own=1`;
+      let url = `https://www.boardgamegeek.com/xmlapi/collection/${this.inputtedUsername}?own=1`;
       this.$toast.open({
         message: 'This may take a moment!',
         duration: 2000,
@@ -62,13 +66,13 @@ export default {
       
         this.data = JSON.parse(jsonResult);
         this.games = this.data.items.item;
-        this.games.forEach(game => {
-          this.gameNames.push(game.name._text);
-        });
+        this.username = this.inputtedUsername;
+        this.inputtedUsername = null;
+        this.haveUsername = true;
       });
     },
     pickAGame(){
-      let gameNumber = Math.floor(Math.random() * this.gameNames.length);
+      let gameNumber = Math.floor(Math.random() * this.games.length);
       this.pickedGame = this.games[gameNumber];
       this.pickedGameRating = Number(this.pickedGame.stats.rating.average._attributes.value).toFixed(1);
     }
