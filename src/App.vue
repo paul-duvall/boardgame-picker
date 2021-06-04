@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <b-container id="app">
     <div>
       <h1>Lazy Gamer</h1>
       <p>Want to play a game but can't be bother to decide which one? Enter your BGG username and you can randomly select
@@ -7,19 +7,19 @@
       </p>
     </div>
     <div>
-      <input v-model="username" type="text">
-      <button @click="getData()">Get collection</button>
-      <div v-if="data">
-          <h2>{{ username }}'s collection</h2>
-          Number of games: {{ games.length }}
-      </div>
+      <b-form-input v-model="username" placeholder="Enter your username"></b-form-input>
+      <b-button class="mt-4" @click="getData()">Get collection</b-button>
     </div>
-    <div v-if="games">
-      <button @click="pickAGame()">Pick a game</button>
-      <div v-if="result" class="result">{{ result }}</div>
-    </div>    
+    <b-card class="mt-4" v-if="data">
+          <h2>{{ username }}'s collection</h2>
+          <p>Number of games: {{ games.length }}</p>
+          <b-button @click="pickAGame()">Pick a game</b-button>
+    </b-card>
+    <b-card class="mt-4" v-if="pickedGame">
+      <div class="result">{{ pickedGame.name._text }}</div>
+    </b-card>    
     
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -33,6 +33,7 @@ export default {
       data: null,
       games: null,
       gameNames: [],
+      pickedGame: null,
       result: null,
       username: null
     }
@@ -58,7 +59,7 @@ export default {
     },
     pickAGame(){
       let gameNumber = Math.floor(Math.random() * this.gameNames.length);
-      this.result = this.gameNames[gameNumber];
+      this.pickedGame = this.games[gameNumber];
     }
   }
 }
@@ -67,11 +68,9 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 30px;
 }
 .result {
   margin-top: 30px;
