@@ -47,7 +47,8 @@
           </ul>
         </div>
       </div>
-    </b-card>    
+    </b-card>
+    <app-footer />    
   </b-container>
 </template>
 
@@ -55,8 +56,13 @@
 const axios = require('axios');
 const convert = require('xml-js');
 
+import AppFooter from '@/components/AppFooter.vue';
+
 export default {
   name: 'App',
+  components: {
+    AppFooter
+  },
   data: function () {
     return {
       data: null,
