@@ -19,17 +19,34 @@
           <b-button @click="pickAGame()">
             <span v-if="pickedGame">Pick different game</span>
             <span v-else>Pick a game</span>
-            </b-button>
+          </b-button>
+          <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
     </b-card>
-    <b-card class="mt-4 mb-4" v-if="pickedGame">
-      <img class="image" :src="pickedGame.image._text">
-      <h2 class="result">{{ pickedGame.name._text }}</h2>
-      <ul>
-        <li>BGG average rating: {{ pickedGameRating }}</li>
-        <li>Game length: {{ pickedGame.stats._attributes.playingtime }}m</li>
-        <li>Number of players: {{ pickedGame.stats._attributes.minplayers}} - {{ pickedGame.stats._attributes.maxplayers }}
-        </li>
-      </ul>
+    <b-collapse id="collapse-1">
+      <b-card class="mt-4">
+        <h2>Advanced settings</h2>
+        <b-form-checkbox
+          v-model="filters.excludeExpansions"
+        >
+          Exclude expansions
+        </b-form-checkbox>
+        
+        <b-button>Update results</b-button>
+      </b-card>
+    </b-collapse>
+    <b-card class="mt-4 mb-4" v-if="pickedGameData">
+      <div class="d-flex">
+        <img class="result--image" :src="pickedGame.imageUrl">
+        <div>
+          <h2 class="result--name">{{ pickedGame.name }}</h2>
+          <ul class="result--details">
+            <li>Play time: {{ pickedGame.playtime }} minutes</li>
+            <li>BGG average rating: {{ pickedGame.rating }}</li>
+            <li>Number of players: {{ pickedGame.playerCount }}
+            </li>
+          </ul>
+        </div>
+      </div>
     </b-card>    
   </b-container>
 </template>
@@ -43,18 +60,35 @@ export default {
   data: function () {
     return {
       data: null,
+      filters: {
+        excludeExpansions: false
+      },
       games: null,
       haveUsername: false,
       inputtedUsername: null,
-      pickedGame: null,
+      pickedGame: {
+        imageUrl: null,
+        name: null,
+        playerCount: '',
+        playtime: null,
+        rating: null
+      },
+      pickedGameData: null,
       pickedGameRating: null,
       result: null,
       username: null
     }
   },
   methods: {
+    applyFilters() {
+      if(this.filters.excludeExpansions) {
+        this.games.filter(game => {
+          console.log(game);
+        });
+      }
+    },
     getData() {
-      let url = `https://www.boardgamegeek.com/xmlapi/collection/${this.inputtedUsername}?own=1`;
+      let url = `https://www.boardgamegeek.com/xmlapi2/collection?username=${this.inputtedUsername}&own=1`;
       this.$toast.open({
         message: 'This may take a moment!',
         duration: 2000,
@@ -62,7 +96,7 @@ export default {
         type: 'info'
       });
       axios.get(url).then((response) => {
-        var jsonResult = convert.xml2json(response.data, {compact: true, spaces: 4});
+        let jsonResult = convert.xml2json(response.data, {compact: true, spaces: 4});
       
         this.data = JSON.parse(jsonResult);
         this.games = this.data.items.item;
@@ -73,8 +107,26 @@ export default {
     },
     pickAGame(){
       let gameNumber = Math.floor(Math.random() * this.games.length);
-      this.pickedGame = this.games[gameNumber];
-      this.pickedGameRating = Number(this.pickedGame.stats.rating.average._attributes.value).toFixed(1);
+      let gameId = this.games[gameNumber]._attributes.objectid;
+    
+      let url = `https://www.boardgamegeek.com/xmlapi2/thing?id=${gameId}&stats=1`;
+      axios.get(url).then((response) => {
+        let jsonResult = convert.xml2json(response.data, {compact: true, spaces: 4});
+
+        let data = JSON.parse(jsonResult);
+        this.pickedGameData = data.items.item;
+        if(this.pickedGameData.name._attributes) {
+          this.pickedGame.name = this.pickedGameData.name._attributes.value;
+        } else {
+          this.pickedGame.name = this.pickedGameData.name[0]._attributes.value;
+        }
+        this.pickedGame.imageUrl = this.pickedGameData.image._text;
+        this.pickedGame.playtime = this.pickedGameData.playingtime._attributes.value;
+        let rating = this.pickedGameData.statistics.ratings.average._attributes.value;
+        this.pickedGame.rating = (Math.ceil( rating * 10 ) / 10).toFixed(1);
+        this.pickedGame.playerCount = `${this.pickedGameData.minplayers._attributes.value} - 
+        ${this.pickedGameData.maxplayers._attributes.value}`;
+      });
     }
   }
 }
@@ -87,10 +139,17 @@ export default {
   color: #2c3e50;
   margin-top: 30px;
 }
-.result {
+.result--name {
   margin-top: 30px;
 }
-.image {
+.result--image {
   max-width: 350px;
+  width: 100%;
+}
+
+.result--details {
+  list-style: none;
+  text-align: left;
+  color: #3b4753;
 }
 </style>
