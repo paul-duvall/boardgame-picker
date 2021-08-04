@@ -1,55 +1,56 @@
 <template>
-  <b-container id="app">
-    <div>
-      <h1>Lazy Gamer</h1>
-      <p>Want to play a game but can't be bother to decide which one? Enter your BGG username and you can randomly select
-         a game that you have in your collection.
-      </p>
-    </div>
-    <div>
-      <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
-      <b-button class="mt-4" @click="getData()">
-        <span v-if="haveUsername">Get a different collection</span>
-        <span v-else>Get collection</span>
-      </b-button>
-    </div>
-    <b-card class="mt-4" v-if="data">
-          <h2>{{ username }}'s collection</h2>
-          <p>Number of games: {{ games.length }}</p>
-          <b-button @click="pickAGame()">
-            <span v-if="pickedGame">Pick different game</span>
-            <span v-else>Pick a game</span>
-          </b-button>
-          <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
-    </b-card>
-    <b-collapse id="collapse-1">
-      <b-card class="mt-4">
-        <h2>Advanced settings</h2>
-        <b-form-checkbox
-          v-model="filters.excludeExpansions"
-        >
-          Exclude expansions
-        </b-form-checkbox>
-        
-        <b-button>Update results</b-button>
-      </b-card>
-    </b-collapse>
-    <b-card class="mt-4 mb-4" v-if="pickedGameData">
-      <div class="d-flex">
-        <img class="result--image" :src="pickedGame.imageUrl">
-        <div>
-          <h2 class="result--name">{{ pickedGame.name }}</h2>
-          <ul class="result--details">
-            <li>Play time: {{ pickedGame.playtime }} minutes</li>
-            <li>BGG average rating: {{ pickedGame.rating }}</li>
-            <li>Number of players: {{ pickedGame.playerCount }}
-            </li>
-          </ul>
-        </div>
+  <div>
+      <app-header />
+      <b-container id="app">
+      <p>Want to play a game but can't decide which one?</p>
+      
+      <p>Enter your BGG username and you can randomly select
+          a game that you have in your collection.</p>
+      <div class="d-flex flex-column align-items-center">
+        <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
+        <b-button class="mt-4" @click="getData()">
+          <span v-if="haveUsername">Get a different collection</span>
+          <span v-else>Get collection</span>
+        </b-button>
       </div>
-    </b-card>
-    <app-footer />    
-  </b-container>
+      <b-card class="mt-4" v-if="data">
+            <h2>{{ username }}'s collection</h2>
+            <p>Number of games: {{ games.length }}</p>
+            <b-button @click="pickAGame()">
+              <span v-if="pickedGame">Pick different game</span>
+              <span v-else>Pick a game</span>
+            </b-button>
+            <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
+      </b-card>
+      <b-collapse id="collapse-1">
+        <b-card class="mt-4">
+          <h2>Advanced settings</h2>
+          <b-form-checkbox
+            v-model="filters.excludeExpansions"
+          >
+            Exclude expansions
+          </b-form-checkbox>
+          
+          <b-button>Update results</b-button>
+        </b-card>
+      </b-collapse>
+      <b-card class="mt-4 mb-4" v-if="pickedGameData">
+        <div class="d-flex">
+          <img class="result--image" :src="pickedGame.imageUrl">
+          <div>
+            <h2 class="result--name">{{ pickedGame.name }}</h2>
+            <ul class="result--details">
+              <li>Play time: {{ pickedGame.playtime }} minutes</li>
+              <li>BGG average rating: {{ pickedGame.rating }}</li>
+              <li>Number of players: {{ pickedGame.playerCount }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </b-card>
+      <app-footer />    
+    </b-container>
+  </div>
 </template>
 
 <script>
@@ -57,11 +58,13 @@ const axios = require('axios');
 const convert = require('xml-js');
 
 import AppFooter from '@/components/AppFooter.vue';
+import AppHeader from '@/components/AppHeader.vue';
 
 export default {
   name: 'App',
   components: {
-    AppFooter
+    AppFooter,
+    AppHeader
   },
   data: function () {
     return {
@@ -139,11 +142,23 @@ export default {
 </script>
 
 <style>
+input {
+  max-width: 25rem;
+}
+
+.navbar {
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.navbar-brand {
+    padding-right: 4rem;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: #2c3e50;
-  margin-top: 30px;
 }
 .result--name {
   margin-top: 30px;
