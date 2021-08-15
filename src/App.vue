@@ -1,27 +1,38 @@
 <template>
-  <div>
-      <app-header />
-      <b-container id="app">
-      <p>Want to play a game but can't decide which one?</p>
-      
-      <p>Enter your BGG username and you can randomly select
-          a game that you have in your collection.</p>
-      <div class="d-flex flex-column align-items-center">
-        <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
-        <b-button class="mt-4" @click="getData()">
-          <span v-if="haveUsername">Get a different collection</span>
-          <span v-else>Get collection</span>
-        </b-button>
-      </div>
-      <b-card class="mt-4" v-if="data">
-            <h2>{{ username }}'s collection</h2>
-            <p>Number of games: {{ games.length }}</p>
-            <b-button @click="pickAGame()">
-              <span v-if="pickedGame">Pick different game</span>
-              <span v-else>Pick a game</span>
-            </b-button>
-            <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
+  <div class="app-container d-flex flex-column justify-content-between">
+    <app-header />
+    <b-container id="app" class="d-flex flex-column align-items-center">
+      <b-card 
+        bg-variant="light" 
+        header="Choose collection" 
+        class="app--card"
+      >
+        <p>Want to play a game but can't decide which one?</p>
+        <p>Enter your BGG username and you can randomly select
+            a game that you have in your collection.</p>
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+          <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
+          <b-button class="selector--button mt-3 mt-md-0" @click="getData()">
+            <span v-if="haveUsername">Get a different collection</span>
+            <span v-else>Get collection</span>
+          </b-button>
+        </div>
       </b-card>
+
+      <b-card 
+        bg-variant="light" 
+        :header="username + '\'s collection'" 
+        class="app--card mt-4" 
+        v-if="data"
+      >
+        <p>Number of games: {{ games.length }}</p>
+        <b-button @click="pickAGame()">
+          <span v-if="pickedGame">Pick different game</span>
+          <span v-else>Pick a game</span>
+        </b-button>
+        <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
+      </b-card>
+
       <b-collapse id="collapse-1">
         <b-card class="mt-4">
           <h2>Advanced settings</h2>
@@ -29,8 +40,7 @@
             v-model="filters.excludeExpansions"
           >
             Exclude expansions
-          </b-form-checkbox>
-          
+          </b-form-checkbox>      
           <b-button>Update results</b-button>
         </b-card>
       </b-collapse>
@@ -47,9 +57,9 @@
             </ul>
           </div>
         </div>
-      </b-card>
-      <app-footer />    
+      </b-card>    
     </b-container>
+    <app-footer />
   </div>
 </template>
 
@@ -142,8 +152,8 @@ export default {
 </script>
 
 <style>
-input {
-  max-width: 25rem;
+.app-container {
+  min-height: 100vh;
 }
 
 .navbar {
@@ -152,7 +162,15 @@ input {
 }
 
 .navbar-brand {
-    padding-right: 4rem;
+  padding-right: 4rem;
+}
+
+input {
+  max-width: 25rem;
+}
+
+.selector--button {
+  margin-left: 1.5rem;
 }
 
 #app {
@@ -160,6 +178,11 @@ input {
   text-align: center;
   color: #2c3e50;
 }
+
+.app--card {
+ max-width: 60rem;
+}
+
 .result--name {
   margin-top: 30px;
 }
