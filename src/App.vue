@@ -10,6 +10,7 @@
         <p>Want to play a game but can't decide which one?</p>
         <p>Enter your BGG username and you can randomly select
             a game that you have in your collection.</p>
+        <p>No idea what any of this nonsense is about? <a class="app--card-link" @click="showHelpModal()">Click here</a> for a helping hand.</p>
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
           <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
           <b-button class="selector--button mt-3 mt-md-0" @click="getData()">
@@ -57,7 +58,8 @@
             </ul>
           </div>
         </div>
-      </b-card>    
+      </b-card>   
+      <help-modal v-on:loadDevelopersCollection="loadDevelopersCollection()"/> 
     </b-container>
     <app-footer />
   </div>
@@ -69,12 +71,14 @@ const convert = require('xml-js');
 
 import AppFooter from '@/components/AppFooter.vue';
 import AppHeader from '@/components/AppHeader.vue';
+import HelpModal from '@/components/HelpModal.vue';
 
 export default {
   name: 'App',
   components: {
     AppFooter,
-    AppHeader
+    AppHeader,
+    HelpModal
   },
   data: function () {
     return {
@@ -124,6 +128,11 @@ export default {
         this.haveUsername = true;
       });
     },
+    loadDevelopersCollection() {
+      console.log('hi');
+      this.inputtedUsername = 'jammymonkey';
+      this.getData();
+    },
     pickAGame(){
       let gameNumber = Math.floor(Math.random() * this.games.length);
       let gameId = this.games[gameNumber]._attributes.objectid;
@@ -146,6 +155,9 @@ export default {
         this.pickedGame.playerCount = `${this.pickedGameData.minplayers._attributes.value} - 
         ${this.pickedGameData.maxplayers._attributes.value}`;
       });
+    },
+    showHelpModal() {
+      this.$bvModal.show('help-modal');
     }
   }
 }
@@ -181,6 +193,12 @@ input {
 
 .app--card {
  max-width: 60rem;
+}
+
+.app--card-link {
+  color: #2c3e50;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .result--name {
