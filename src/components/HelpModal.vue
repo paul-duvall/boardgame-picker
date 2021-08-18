@@ -28,7 +28,6 @@ export default {
     name: 'HelpModal',
     methods: {
         requestDevelopersCollection() {
-            console.log('hi from help modal');
             this.$emit('loadDevelopersCollection');
             this.$bvModal.hide('help-modal');
         }

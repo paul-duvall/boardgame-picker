@@ -28,13 +28,13 @@
       >
         <p>Number of games: {{ games.length }}</p>
         <b-button @click="pickAGame()">
-          <span v-if="pickedGame">Pick different game</span>
-          <span v-else>Pick a game</span>
+          <span v-if="pickedGame.name === null">Pick a game</span>
+          <span v-else>Pick different game</span>
         </b-button>
         <b-button class="mx-3" v-b-toggle.collapse-1>Advanced settings</b-button>
       </b-card>
 
-      <b-collapse id="collapse-1">
+      <!-- <b-collapse id="collapse-1">
         <b-card class="mt-4">
           <h2>Advanced settings</h2>
           <b-form-checkbox
@@ -44,19 +44,44 @@
           </b-form-checkbox>      
           <b-button>Update results</b-button>
         </b-card>
-      </b-collapse>
-      <b-card class="mt-4 mb-4" v-if="pickedGameData">
-        <div class="d-flex">
+      </b-collapse> -->
+
+      <b-card 
+        class="app--card mt-4 mb-4" 
+        v-if="pickedGameData"
+        :header="'Selected game: ' + pickedGame.name"   
+      >
+        <div class="d-flex flex-column flex-md-row justify-content-center">
           <img class="result--image" :src="pickedGame.imageUrl">
-          <div>
-            <h2 class="result--name">{{ pickedGame.name }}</h2>
-            <ul class="result--details">
-              <li>Play time: {{ pickedGame.playtime }} minutes</li>
-              <li>BGG average rating: {{ pickedGame.rating }}</li>
-              <li>Number of players: {{ pickedGame.playerCount }}
-              </li>
-            </ul>
+          <div class="result--details">            
+            <div class="row">
+              <div class="col-sm">
+                <strong>Play time</strong>
+              </div>
+              <div class="col-sm">
+                {{ pickedGame.playtime }} minutes
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm">
+                <strong>BGG average rating</strong>
+              </div>
+              <div class="col-sm">
+                {{ pickedGame.rating }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm">
+                <strong>Number of players</strong>
+              </div>
+              <div class="col-sm">
+                {{ pickedGame.playerCount }}
+              </div>
+            </div>
           </div>
+
         </div>
       </b-card>   
       <help-modal v-on:loadDevelopersCollection="loadDevelopersCollection()"/> 
@@ -129,7 +154,6 @@ export default {
       });
     },
     loadDevelopersCollection() {
-      console.log('hi');
       this.inputtedUsername = 'jammymonkey';
       this.getData();
     },
@@ -192,7 +216,8 @@ input {
 }
 
 .app--card {
- max-width: 60rem;
+  width: 100%;
+  max-width: 60rem;
 }
 
 .app--card-link {
@@ -201,17 +226,23 @@ input {
   text-decoration: underline;
 }
 
-.result--name {
-  margin-top: 30px;
-}
+/* Result card */
+
 .result--image {
-  max-width: 350px;
   width: 100%;
 }
 
+@media only screen and (min-width: 400px) {
+  .result--image {
+    max-width: 20rem;
+    width: 50%;
+    margin-right: 5rem;
+  }  
+}
+
 .result--details {
-  list-style: none;
   text-align: left;
   color: #3b4753;
+  min-width: 20rem;
 }
 </style>
