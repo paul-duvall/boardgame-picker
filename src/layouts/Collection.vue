@@ -25,9 +25,8 @@
     object-fit: cover;
 }
 </style>
+
 <script>
-// const axios = require('axios');
-// const convert = require('xml-js');
 import { mapGetters } from 'vuex';
 
 export default {

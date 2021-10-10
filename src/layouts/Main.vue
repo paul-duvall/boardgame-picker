@@ -7,8 +7,8 @@
       >
         <p>Want to play a game but can't decide which one?</p>
         <p>Enter your BGG username and you can randomly select
-            a game that you have in your collection.</p>
-        <p>No idea what any of this nonsense is about? <a class="app--card-link" @click="showHelpModal()">Click here</a> for a helping hand.</p>
+            a game to play from your collection.</p>
+        <p>No idea what any of this nonsense is about? <a class="app--card-link" @click="showHelpModal()">Click for help</a>.</p>
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
           <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
           <b-button class="selector--button mt-3 mt-md-0" @click="getData()">
@@ -22,7 +22,7 @@
         bg-variant="light" 
         :header="username + '\'s collection'" 
         class="app--card mt-4" 
-        v-if="data"
+        v-if="games"
       >
         <p>Number of games: {{ games.length }}</p>
         <b-button @click="pickAGame()">
@@ -88,7 +88,7 @@
 <script>
 const axios = require('axios');
 const convert = require('xml-js');
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import HelpModal from '@/components/HelpModal.vue';
 
@@ -119,9 +119,20 @@ export default {
       username: null
     }
   },
+  computed: {
+    ...mapGetters([
+      'getGames',
+      'getUsername'
+    ])
+  },
+  mounted() {
+    this.games = this.getGames;
+    this.username = this.getUsername;
+  },
   methods: {
     ...mapActions({
-      setGames: 'setGames' // map `this.add()` to `this.$store.dispatch('increment')`
+      setGames: 'setGames',
+      setUsername: 'setUsername'
     }),
     applyFilters() {
       if(this.filters.excludeExpansions) {
@@ -144,8 +155,8 @@ export default {
         this.data = JSON.parse(jsonResult);
         this.games = this.data.items.item;
         this.setGames(this.data.items.item);
-        // this.$store.actions('setGames', { games: this.data.items.item });
-        // this.$store.dispatch('setGames', { games: this.data.items.item });
+        // manage username (set to state and data)
+        this.setUsername(this.inputtedUsername);
         this.username = this.inputtedUsername;
         this.inputtedUsername = null;
         this.haveUsername = true;

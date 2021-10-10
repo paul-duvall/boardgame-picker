@@ -5,24 +5,31 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        games: null
+        games: null,
+        username: null
     },
     mutations: {
         SET_GAMES(state, payload) {
             state.games = payload;
+        },
+        SET_USERNAME(state, payload) {
+            state.username = payload;
         }
     },
     actions: {
-        setGames({ commit}, games) {
+        setGames({ commit }, games) {
             commit('SET_GAMES', games);
+        },
+        setUsername({ commit }, username) {
+            commit('SET_USERNAME', username);
         }
     },
     getters: {
         getGames(state) {
             return state.games;
         },
-        getTestThing(state) {
-            return state.testThing;
+        getUsername(state) {
+            return state.username;
         }
     }
 });
