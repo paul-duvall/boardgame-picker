@@ -6,9 +6,8 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item href="#">Game picker</b-nav-item>
-            <b-nav-item href="#">Collection</b-nav-item>
-            <b-nav-item href="#">Help</b-nav-item>
+            <b-nav-item><router-link to="/">Game picker</router-link></b-nav-item>
+            <b-nav-item><router-link to="/collection">Collection</router-link></b-nav-item>
           </b-navbar-nav>       
         </b-collapse>
     </b-navbar>
