@@ -1,5 +1,8 @@
 <template>
-    <b-card-group class="d-flex flex-wrap" deck>
+    <div v-if="games === null">
+        <choose-collection-card :updateGames="updateGames()" />
+    </div>
+    <b-card-group v-else class="d-flex flex-wrap" deck>
         <b-card
             v-for="game in games"
             v-bind:key="game.name._text"
@@ -29,8 +32,13 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import ChooseCollectionCard from '@/components/ChooseCollectionCard.vue';
+
 export default {
     name: 'App',
+    components: {
+        ChooseCollectionCard
+    },
     data() {
         return {
             games: null
@@ -42,7 +50,12 @@ export default {
         ])
     },
     mounted() {
-        this.games = this.getGames;
+        this.updateGames();
+    },
+    methods: {
+        updateGames() {
+            this.games = this.getGames;
+        }
     }
 }
 </script>

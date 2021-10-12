@@ -2,22 +2,15 @@
     <div>
       <b-card 
         bg-variant="light" 
-        header="Choose collection" 
+        header="Welcome to the Game Picker!" 
         class="app--card"
       >
         <p>Want to play a game but can't decide which one?</p>
         <p>Enter your BGG username and you can randomly select
             a game to play from your collection.</p>
         <p>No idea what any of this nonsense is about? <a class="app--card-link" @click="showHelpModal()">Click for help</a>.</p>
-        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
-          <b-form-input v-model="inputtedUsername" placeholder="Enter BGG username"></b-form-input>
-          <b-button class="selector--button mt-3 mt-md-0" @click="getData()">
-            <span v-if="haveUsername">Get a different collection</span>
-            <span v-else>Get collection</span>
-          </b-button>
-        </div>
       </b-card>
-
+      <choose-collection-card :updateGames="updateGames()" />
       <b-card 
         bg-variant="light" 
         :header="username + '\'s collection'" 
@@ -88,15 +81,21 @@
 <script>
 const axios = require('axios');
 const convert = require('xml-js');
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex';
 
 import HelpModal from '@/components/HelpModal.vue';
+import ChooseCollectionCard from '@/components/ChooseCollectionCard.vue';
+import Games from '@/mixins/games.js';
 
 export default {
   name: 'App',
   components: {
+    ChooseCollectionCard,
     HelpModal
   },
+  mixins: [
+    Games
+  ],
   data: function () {
     return {
       data: null,
@@ -126,8 +125,7 @@ export default {
     ])
   },
   mounted() {
-    this.games = this.getGames;
-    this.username = this.getUsername;
+    this.updateGames();
   },
   methods: {
     ...mapActions({
@@ -140,27 +138,6 @@ export default {
           console.log(game);
         });
       }
-    },
-    getData() {
-      let url = `https://www.boardgamegeek.com/xmlapi2/collection?username=${this.inputtedUsername}&own=1`;
-      this.$toast.open({
-        message: 'This may take a moment!',
-        duration: 2000,
-        position: 'bottom',
-        type: 'info'
-      });
-      axios.get(url).then((response) => {
-        let jsonResult = convert.xml2json(response.data, {compact: true, spaces: 4});
-      
-        this.data = JSON.parse(jsonResult);
-        this.games = this.data.items.item;
-        this.setGames(this.data.items.item);
-        // manage username (set to state and data)
-        this.setUsername(this.inputtedUsername);
-        this.username = this.inputtedUsername;
-        this.inputtedUsername = null;
-        this.haveUsername = true;
-      });
     },
     loadDevelopersCollection() {
       this.inputtedUsername = 'jammymonkey';
@@ -191,6 +168,10 @@ export default {
     },
     showHelpModal() {
       this.$bvModal.show('help-modal');
+    },
+    updateGames() {
+      this.games = this.getGames;
+      this.username = this.getUsername;
     }
   }
 }
